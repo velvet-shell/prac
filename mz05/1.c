@@ -4,6 +4,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <limits.h>
 
 int
 main(int argc, char *argv[])
@@ -31,7 +32,9 @@ main(int argc, char *argv[])
         i++;
     }
     lseek(fd, min_ind * sizeof(min), SEEK_SET);
-    min *= -1;
+    if (min != LLONG_MIN) {
+        min *= -1;
+    }
     write(fd, &min, sizeof(min));
     close(fd);
     return 0;

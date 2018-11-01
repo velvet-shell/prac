@@ -2,6 +2,11 @@
 #include <time.h>
 #include <string.h>
 
+enum
+{
+    D_SEC = 86400 //seconds in one day
+};
+
 int
 main(int argc, char *argv[])
 {
@@ -13,13 +18,12 @@ main(int argc, char *argv[])
     sscanf(argv[1], "%d", &year);
     sscanf(argv[2], "%d", &day);
 
-    struct tm time;
-    memset(&time, 0, sizeof(time));
+    struct tm time = { 0 };
 
     time.tm_isdst = -1;
     time.tm_year = year - 1900;
     time_t off = mktime(&time);
-    off += day * 24 * 60 * 60;
+    off += day * D_SEC;
     localtime_r(&off, &time);
 
     if (!time.tm_wday) {
