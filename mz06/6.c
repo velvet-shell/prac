@@ -28,8 +28,7 @@ dir_traverse(char *global_path, int offset, struct stat *file)
         if (!strcmp(entry->d_name, ".") || !strcmp(entry->d_name, "..")) {
             continue;
         }
-        strcpy(global_path + offset, "/");
-        strcpy(global_path + offset + 1, entry->d_name);
+        snprintf(global_path + offset, NAME_MAX + 2, "/%s", entry->d_name);
 
         if (lstat(global_path, file) < 0) {
             continue;
@@ -52,8 +51,7 @@ dir_traverse(char *global_path, int offset, struct stat *file)
     closedir(d);
     for (int i = 0; i < dir_cnt; i++) {
         printf("cd %s\n", dir_list[i]);
-        strcpy(global_path + offset, "/");
-        strcpy(global_path + offset + 1, dir_list[i]);
+        snprintf(global_path + offset, NAME_MAX + 2, "/%s", dir_list[i]);
 
         dir_traverse(global_path, offset + strlen(dir_list[i]) + 1, file);
 
@@ -72,7 +70,7 @@ main(int argc, char *argv[])
     }
     struct stat file;
     char global_path[PATH_MAX + 2];
-    strcpy(global_path, argv[1]);
+    snprintf(global_path, PATH_MAX, "%s", argv[1]);
     dir_traverse(global_path, strlen(global_path), &file);
     return 0;
 }
