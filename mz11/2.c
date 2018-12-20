@@ -4,18 +4,24 @@
 #include <stdlib.h>
 #include <sys/types.h>
 
+enum
+{
+    SUM_MODE = 0,
+    MUL_MODE = 1
+};
+
 volatile int flag = 0;
 
 void sum(int sig)
 {
     signal(SIGINT, sum);
-    flag = 0;
+    flag = SUM_MODE;
 }
 
 void mul(int sig)
 {
     signal(SIGQUIT, mul);
-    flag = 1;
+    flag = MUL_MODE;
 }
 
 int main(void) {
@@ -28,7 +34,7 @@ int main(void) {
     int tmp;
     int sum = 0;
     while (scanf("%d", &tmp) == 1) {
-        if (!flag) {
+        if (flag == SUM_MODE) {
             sum += (long long) tmp;
         } else {
             sum *= (long long) tmp;

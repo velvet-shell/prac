@@ -19,8 +19,8 @@ main(int argc, char const *argv[])
 
     while ((entry = readdir(d))) {
 
-        char path[PATH_MAX + 2];
-        snprintf(path, PATH_MAX + 2, "%s/%s", argv[1], entry->d_name);
+        char path[PATH_MAX];
+        snprintf(path, PATH_MAX, "%s/%s", argv[1], entry->d_name);
 
         struct stat buf;
         if (stat(path, &buf) < 0) {

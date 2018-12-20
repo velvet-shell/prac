@@ -22,9 +22,9 @@ main(int argc, char *argv[])
 
     time.tm_isdst = -1;
     time.tm_year = year - 1900;
-    time_t off = mktime(&time);
-    off += day * D_SEC;
-    localtime_r(&off, &time);
+    int off = day * D_SEC;
+    time.tm_sec = off;
+    mktime(&time);
 
     if (!time.tm_wday) {
         time.tm_wday = 7;

@@ -3,21 +3,24 @@
 
 enum { MAX_PERCENT = 100 };
 
-struct Pair
-{
-    int value;
-    int prob;
-};
-
 int
 main(void)
 {
     int n;
     scanf("%d", &n);
-    
-    struct Pair *pairs = calloc(n, sizeof(*pairs));
+   
+    int prob[100];
+    int last = 0;
     for (int i = 0; i < n; i++) {
-        scanf("%d%d", &pairs[i].value, &pairs[i].prob);
+        int value, index;
+        scanf("%d%d", &value, &index);
+        if (index > 100 || last + index > 100) {
+            return 1;
+        }
+        for (int j = last; j < last + index; j++) {
+            prob[j] = value;
+        }
+        last += index;
     }
     
     int m, seed;
@@ -25,15 +28,7 @@ main(void)
     srand(seed);
     for (int i = 0; i < m; i++) {
         int a = rand() / (RAND_MAX + 1.0) * MAX_PERCENT;
-        int low = 0;
-        for (int j = 0; j < n; j++) {
-            if (a >= low && a < low + pairs[j].prob) {
-                printf("%d\n", pairs[j].value);
-                break;
-            }
-            low += pairs[j].prob;
-        }
+        printf("%d\n", prob[a]);
     }
-    free(pairs);
     return 0;
 }

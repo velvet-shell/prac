@@ -33,6 +33,12 @@ gid_check(unsigned gid0, int gid_count, unsigned *gids)
     return 0;
 }
 
+static int
+perm_check(const struct stat *stb, int offset, int access)
+{
+    return ((stb->st_mode >> offset) & access) == access;
+}
+
 int
 myaccess(const struct stat *stb, const struct Task *task, int access)
 {
@@ -40,10 +46,10 @@ myaccess(const struct stat *stb, const struct Task *task, int access)
         return 1;
     }
     if (uid_check(stb->st_uid, task->uid)) {
-        return ((stb->st_mode >> USER) & access) == access;
+        return perm_check(stb, USER, access);
     }
     if (gid_check(stb->st_gid, task->gid_count, task->gids)) {
-        return ((stb->st_mode >> GROUP) & access) == access;
+        return perm_check(stb, GROUP, access);
     }
-    return (stb->st_mode & access) == access;
+    return perm_check(stb, 0, access);
 }

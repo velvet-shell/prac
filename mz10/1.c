@@ -4,6 +4,15 @@
 #include <stdlib.h>
 #include <time.h>
 
+struct tm* gettime(int fd[2])
+{
+    wait(NULL);
+    close(fd[1]);
+    time_t c_time;
+    read(fd[0], &c_time, sizeof(c_time));
+    return localtime(&c_time);    
+}
+
 int main(void) {
     int fd[2];
     pipe(fd);
@@ -12,40 +21,22 @@ int main(void) {
             if (!fork()) {
                 close(fd[0]);
                 time_t c_time = time(NULL);
-                write(fd[1], &c_time, sizeof(c_time));
-                write(fd[1], &c_time, sizeof(c_time));
-                write(fd[1], &c_time, sizeof(c_time));
+                for (int i = 0; i < 3; i++) {
+                    write(fd[1], &c_time, sizeof(c_time));
+                }
                 return 0;
             } else {
-                wait(NULL);
-                close(fd[1]);
-                time_t c_time;
-                read(fd[0], &c_time, sizeof(c_time));
-                struct tm tmp;
-                localtime_r(&c_time, &tmp);
-                printf("D:%d\n", tmp.tm_mday);
+                printf("D:%d\n", gettime(fd)->tm_mday);
                 fflush(stdout);
                 return 0;
             }
         } else {
-            wait(NULL);
-            close(fd[1]);
-            time_t c_time;
-            read(fd[0], &c_time, sizeof(c_time));
-            struct tm tmp;
-            localtime_r(&c_time, &tmp);
-            printf("M:%d\n", tmp.tm_mon + 1);
+            printf("M:%d\n", gettime(fd)->tm_mon + 1);
             fflush(stdout);
             return 0;
         }
     } else {
-        wait(NULL);
-        close(fd[1]);
-        time_t c_time;
-        read(fd[0], &c_time, sizeof(c_time));
-        struct tm tmp;
-        localtime_r(&c_time, &tmp);
-        printf("Y:%d\n", tmp.tm_year + 1900);
+        printf("Y:%d\n", gettime(fd)->tm_year + 1900);
         fflush(stdout);
         return 0;
     }

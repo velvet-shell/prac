@@ -2,14 +2,25 @@
 #include <time.h>
 #include <string.h>
 
+enum
+{
+    BDAY_YEAR = 25, //Emperor's birthday according to the gregorian calendar
+    BDAY_MON = 9,
+    BDAY_MDAY = 7,
+    YDAYS = 360, //days in 1 year
+    YMONS = 12, //months in 1 year
+    MDAYS = 30, //days in 1 month
+    DSECS = 86400 //seconds in 1 day
+};
+
 int
 main(void)
 {
     struct tm gregorian = { 0 };
 
-    gregorian.tm_year = 25;
-    gregorian.tm_mon = 9;
-    gregorian.tm_mday = 7;
+    gregorian.tm_year = BDAY_YEAR;
+    gregorian.tm_mon = BDAY_MON;
+    gregorian.tm_mday = BDAY_MDAY;
     gregorian.tm_isdst = -1;
 
     long long offset = mktime(&gregorian);
@@ -26,11 +37,11 @@ main(void)
         long long time = mktime(&gregorian);
 
         time -= offset;
-        time /= (3600 * 24);
+        time /= DSECS;
 
-        unsigned long long nday = time % 30 + 1;
-        unsigned long long nmon = (time / 30) % 12 + 1;
-        unsigned long long nyear = time / 360 + 1;
+        unsigned long long nday = time % MDAYS + 1;
+        unsigned long long nmon = (time / MDAYS) % YMONS + 1;
+        unsigned long long nyear = time / YDAYS + 1;
 
         printf("%llu %llu %llu\n", nyear, nmon, nday);
     }

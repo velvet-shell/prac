@@ -31,11 +31,17 @@ main(int argc, char *argv[])
         }
         i++;
     }
-    lseek(fd, min_ind * sizeof(min), SEEK_SET);
-    if (min != LLONG_MIN) {
-        min *= -1;
+    if (lseek(fd, min_ind * sizeof(min), SEEK_SET) < 0) {
+        close(fd);
+        return 1;
     }
-    write(fd, &min, sizeof(min));
+    if (min != LLONG_MIN) {
+        min = -min;
+    }
+    if (write(fd, &min, sizeof(min)) != sizeof(min)) {
+        close(fd);
+        return 1;
+    }
     close(fd);
     return 0;
 }

@@ -10,7 +10,7 @@ parse_rwx_permissions(const char *str)
     if (!str) {
         return -1;
     }
-    long size = strlen(str);
+    int size = strlen(str);
     if (size != MASK_SIZE) {
         return -1;
     }
